@@ -1,4 +1,5 @@
 #include "G4SBSPhysicsList.hh"
+#include "PolNucleonRotate.hh"
 
 #include "G4LossTableManager.hh"
 //#include "G4PhysListFactory.hh"
@@ -23,6 +24,8 @@
 
 #include "G4Transportation.hh"
 #include "G4PhysicsListHelper.hh"
+
+PolNucleonRotate *gPolRot;
 
 G4SBSPhysicsList::G4SBSPhysicsList() : G4VModularPhysicsList() {
   
@@ -82,7 +85,8 @@ G4SBSPhysicsList::G4SBSPhysicsList() : G4VModularPhysicsList() {
   //Set optical photon production to be OFF by default:
   ToggleCerenkov(false);
   ToggleScintillation(false);
-  
+
+  gPolRot = new PolNucleonRotate(0);
 }
 
 //Destructor:
