@@ -4662,18 +4662,21 @@ void G4SBSHArmBuilder::MakePolarimeterGEnRP(G4LogicalVolume *worldlog)
   G4double ethresh_default    = 0.05*MeV; // default threshold for scintillator detectors
   G4double timewindow_default = 30.0*ns;  // default time window for scintillator detectors
 
+  double frontgemz   = 19.8*cm;               // distance between downstream face of rear field clamp and first front GEM layer
+  double cuanadist   = frontgemz + 39.7*cm;   // distance between downstream face of rear field clamp and midpoint of iron analyzer
+  double reargemz    = cuanadist + 17.7*cm;   // distance between downstream face of rear field clamp and first rear GEM layer
+  double actanadist  = reargemz  + 60.0 *cm;  // distance between downstream face of rear field clamp and front face of active analyzer
+
   // ----------------------------------------------------------------------------------------------------------------------
   // Make Cu analyzer
   // ----------------------------------------------------------------------------------------------------------------------
-
-  double cuanadist   = 60.0*cm; // distance between back face of rear field clamp and front face of Cu analyzer
   
   double cuanaheight = 198.12*cm; 
   double cuanawidth  = 60.96*cm;
   //double cuanadepth  = 4.0*cm; 
   double cuanadepth = 8.89*cm;
   
-  G4ThreeVector cuana_pos = pos + G4ThreeVector( 0.0, 0.0, (cuanadist + cuanadepth/2.0) ); 
+  G4ThreeVector cuana_pos = pos + G4ThreeVector( 0.0, 0.0, cuanadist ); 
   
   if( fGEnRP_analyzer_option >= 2 && fDetCon->fExpType != G4SBS::kGEN) {
     G4Box*           cuanabox  = new G4Box("cuanabox", cuanawidth/2.0, cuanaheight/2.0, cuanadepth/2.0 );
@@ -4754,7 +4757,7 @@ void G4SBSHArmBuilder::MakePolarimeterGEnRP(G4LogicalVolume *worldlog)
       gemh.resize( ngem_ce[i] );
       for( int j = 0; j < ngem_ce[i]; j++ ){
 	if( i == 0 ){
-	  gemz[j] = -cuanadepth/2.0 + (double)(j-4)*cegem_spacing;
+	  gemz[j] = detoffset + frontgemz + (double)(j)*cegem_spacing;
 	  if( j < 2 ){
 	    gemw[j] = 40.0*cm;
 	    gemh[j] = 150.0*cm;
@@ -4768,7 +4771,7 @@ void G4SBSHArmBuilder::MakePolarimeterGEnRP(G4LogicalVolume *worldlog)
 	  // 	gemh[j] = 200.0*cm;
 	  // }
 	  //else {
-	  gemz[j] = cuanadepth/2.0 + (double)(j+1)*cegem_spacing;
+	  gemz[j] = detoffset + reargemz + (double)(j)*cegem_spacing;
 	  gemw[j] = 60.0*cm;
 	  gemh[j] = 200.0*cm;
 	}
@@ -4776,15 +4779,13 @@ void G4SBSHArmBuilder::MakePolarimeterGEnRP(G4LogicalVolume *worldlog)
 
       bool ispol = i > 0;
       
-      trackerbuilder.BuildComponent( sbslog, rot_I, cuana_pos, ngem_ce[i], gemz, gemw, gemh, SDnames_ce[i], ispol );
+      trackerbuilder.BuildComponent( sbslog, rot_I, G4ThreeVector(0,0,0), ngem_ce[i], gemz, gemw, gemh, SDnames_ce[i], ispol );
     }
   }
   
   // ----------------------------------------------------------------------------------------------------------------------
   // Make Active Analyzer
   // ----------------------------------------------------------------------------------------------------------------------
-
-  double actanadist = 120.0 *cm; // distance between back face of rear field clamp and front face of active analyzer
 
   int    nactanabarsx   = 4;
   int    nactanabarsz   = 8;
