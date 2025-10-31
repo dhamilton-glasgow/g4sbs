@@ -68,7 +68,7 @@ G4Mag_SpinEqRhs::SetChargeMomentumMass(G4ChargeState particleCharge,
    }
 
    if( charge == 0 && spin == 0.5 ) // neutron     
-     anomaly = 1.913;
+     anomaly = -1.913;
    else
      anomaly = (g_BMT - 2.)/2.;
 
